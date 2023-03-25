@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 创建目标对象 -->
+	<bean id="useraop" class="demo12.dao.impl.UserAopDaoImpl"></bean>
+	<!-- 创建切面对象 -->
+	<bean id="userAspect" class="demo12.model.MyUserAspect"></bean>
+    <!-- 创建AspectJ的切面对象 -->
+	<bean id="myaspectj" class="demo12.model.MyAspectJ"></bean>
+<!-- 	AspectJ的配置 -->
+   <aop:config>
+<!--       设置切面对象 -->
+       <aop:aspect id="aspectj1" ref="myaspectj">
+       <!--        定义切入点 -->
+          <aop:pointcut  id="mypointcut1" 
+          expression="execution(public void *User())" ></aop:pointcut>
+          
+           <aop:pointcut  id="mypointcut2" 
+          expression="execution( int getIdByName(..))" ></aop:pointcut>
+<!--       定义前置通知 -->
+          <aop:before method="mybefore" pointcut-ref="mypointcut1"/>
+<!--           后置增强 -->
+           <aop:after-returning method="myafterReturning"
+            pointcut-ref="mypointcut2"
+            returning="returnObj"/>
+<!--            环绕增强  -->
+           <aop:around method="myAround" pointcut-ref="mypointcut1"/>
+           
+       
+       
+       </aop:aspect>
+
+   </aop:config>
+	
+	
+	
+	<!-- 动态代理对象 -->
+	<bean id="userDaoProxy"
+		class="org.springframework.aop.framework.ProxyFactoryBean">
+		<!-- 设置代理接口 -->
+		<property name="proxyInterfaces"
+			value="demo12.dao.UserAopDao"></property>
+		<!-- 设置目标对象 -->
+		<property name="target" ref="useraop"></property>
+		<!-- 设置切面以及环绕增强 -->
+		<property name="interceptorNames" value="userAspect"></property>
+		<!-- 设置代理的方式 -->
+		<property name="proxyTargetClass" value="true"></property>
+	</bean>
+
+</beans>

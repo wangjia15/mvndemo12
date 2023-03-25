@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd">
+
+<!--   设置Spring识别注解 -->
+<!-- 打开注解功能 -->
+<context:annotation-config></context:annotation-config>
+
+<!-- 自动扫描对于的包中的类的注解 -->
+<context:component-scan base-package="demo12">
+</context:component-scan>
+
+    <context:property-placeholder location="classpath:config.properties"/>
+  
+  
+  <bean id="myuserdao" class="demo12.dao.impl.UserDaoImpl">
+     <property name="myuser" ref="myuser1"></property>
+  </bean>
+  
+   <bean id="userdaomysql" class="demo12.dao.impl.UserDaoMySqlImpl">
+     <property name="myuser" ref="myuser2"></property>
+  </bean>
+  
+    <bean id="myuserservice" class="demo12.bll.UserServiceImpl">
+     <property name="userdao" ref="userdaomysql"></property>
+  </bean>
+  
+<!--      配置需要创建的对象  -->  
+  <bean  id="myuser1" class="demo12.model.User" scope="prototype">
+<!--      设置对象属性 -->
+     <property name="name" value="王五"></property>
+     <property name="address" ref="myaddress"></property>
+  </bean>
+  
+  <bean id="myaddress" class="demo12.model.Address">
+    <property name="city" value="成都"></property>
+  </bean>
+  
+  
+    <bean  id="myuser2" class="demo12.model.User">
+      <constructor-arg name="username" value="Tom"></constructor-arg>
+      <constructor-arg name="myaddress" ref="myaddress"></constructor-arg>
+      
+    </bean>
+        
+        
+</beans>
